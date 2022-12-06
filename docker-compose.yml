@@ -1,0 +1,20 @@
+version: '3.7'
+
+services:
+  cryptomoto:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: production
+    container_name: cryptomoto
+    ports:
+      - 3000:3000
+    networks:
+      - webnet
+    env_file:
+      - .env
+    command:
+      - bash -c "npm run start"
+
+networks:
+  webnet:
