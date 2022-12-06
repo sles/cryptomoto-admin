@@ -291,7 +291,7 @@ export default async () => {
         };
     });
     const httpLink = createHttpLink({
-        uri: `${process.env.BACKEND_URL}/graphql`,
+        uri: `https://cryptomoto.app/graphql`,
     });
     const dataProvider = await buildApolloClient({
         clientOptions: {
