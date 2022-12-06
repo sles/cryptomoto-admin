@@ -14,10 +14,10 @@ import orders from './orders';
 import products from './products';
 import invoices from './invoices';
 import categories from './categories';
-
 import dataProviderFactory from './dataProvider';
 import Configuration from './configuration/Configuration';
 import Segments from './segments/Segments';
+import { createBrowserHistory as createHistory } from 'history';
 
 const i18nProvider = polyglotI18nProvider(locale => {
     if (locale === 'fr') {
@@ -28,9 +28,12 @@ const i18nProvider = polyglotI18nProvider(locale => {
     return englishMessages;
 }, 'en');
 
+
+const history = createHistory();
 const App = () => {
     return (
         <Admin
+            history={history}
             title=""
             dataProvider={dataProviderFactory(
                 process.env.REACT_APP_DATA_PROVIDER || ''
