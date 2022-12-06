@@ -291,7 +291,7 @@ export default async () => {
         };
     });
     const httpLink = createHttpLink({
-        uri: "http://localhost:3000/graphql",
+        uri: `${process.env.BACKEND_URL}/graphql`,
     });
     const dataProvider = await buildApolloClient({
         clientOptions: {
