@@ -7,7 +7,7 @@ import {
     List,
     NullableBooleanInput,
     NumberField,
-    SearchInput,
+    SearchInput, TextField,
 } from 'react-admin';
 import { useMediaQuery, Theme } from '@mui/material';
 
@@ -37,7 +37,9 @@ const VisitorList = () => {
             filters={isSmall ? visitorFilters : undefined}
             sort={{ field: 'last_seen', order: 'DESC' }}
             perPage={25}
-            aside={<VisitorListAside />}
+            exporter={false}
+            pagination={false}
+            // aside={<VisitorListAside />}
         >
             {isXsmall ? (
                 <MobileGrid />
@@ -53,18 +55,20 @@ const VisitorList = () => {
                     }}
                 >
                     <CustomerLinkField />
+                    <TextField source="email"/>
                     <DateField source="createdAt" />
                     <NumberField
                         source="experience_points"
                         label="Experience Points"
                         sx={{ color: 'purple' }}
                     />
+
                     {/*<ColoredNumberField*/}
                     {/*    source="total_spent"*/}
                     {/*    options={{ style: 'currency', currency: 'USD' }}*/}
                     {/*/>*/}
                     {/*<DateField source="latest_purchase" showTime />*/}
-                    <BooleanField source="articles" label="Articles" />
+                    {/*<BooleanField source="articles" label="Articles" />*/}
                     <SegmentsField source="accountLevel" />
                 </Datagrid>
             )}

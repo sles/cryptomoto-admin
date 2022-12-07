@@ -3,7 +3,7 @@ import buildApolloClient, {
     buildQuery as buildQueryFactory,
 } from 'ra-data-graphql-simple';
 import { BuildQueryFactory } from 'ra-data-graphql';
-import {CREATE, DataProvider, DELETE, GET_LIST, GET_ONE} from 'react-admin';
+import {CREATE, DataProvider, DELETE, GET_LIST, GET_MANY_REFERENCE, GET_ONE, UPDATE} from 'react-admin';
 import gql from 'graphql-tag';
 import { IntrospectionType } from 'graphql';
 import {setContext} from "@apollo/client/link/context";
@@ -16,8 +16,8 @@ const getGqlResource = (resource: string) => {
         case 'categories':
             return 'Category';
 
-        // case 'commands':
-        //     return 'Command';
+        case 'articles':
+            return "Articles";
 
         case 'products':
             return 'Product';
@@ -29,6 +29,8 @@ const getGqlResource = (resource: string) => {
             return 'Invoice';
         case 'login':
             return 'Login'
+        case 'Customer':
+            return 'Customer'
         default:
             throw new Error(`Unknown resource ${resource}`);
     }
@@ -41,7 +43,7 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
 
     return (type, resource, params) => {
         console.log('customBuildQuery return');
-
+        console.log(type, resource, params)
         const token = localStorage.getItem("token");
         if (type === GET_LIST && resource === 'Category') {
             return {
@@ -57,6 +59,250 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         return  {data: data.getCategoriesForAdmin, total: 123};
                     }
                     throw new Error(`Could not delete ${resource}`);
+                },
+            };
+        }
+
+        if (type === GET_LIST && resource === 'Articles') {
+            return {
+                query: gql`query Query($search: String) {
+                    getArticlesForAdmin(search: $search) {
+                        id
+                        title
+                        short_description
+                        description
+                        viewed_count
+                        likes_count
+                        dislikes_count
+                        comments_count
+                    }
+                }`,
+                variables: {search: null},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.getArticlesForAdmin) {
+                        return  {data: data.getArticlesForAdmin, total: 123};
+                    }
+                    throw new Error(`Could not delete ${resource}`);
+                },
+            };
+        }
+        if (type === DELETE && resource === 'Articles') {
+            return {
+                query: gql`
+                    mutation Mutation($deleteArticleByAdminId: ID!) {
+                        deleteArticleByAdmin(id: $deleteArticleByAdminId) {
+                            code
+                            message
+                        }
+                    }
+                `,
+                variables: {deleteArticleByAdminId: params.id},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.deleteArticleByAdmin) {
+                        return {data: {id:params.id }};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === UPDATE && resource === 'Category') {
+            console.log('edhbvejhdbvjebv', params)
+            return {
+                query: gql`mutation Mutation($updateCategoryId: ID!, $category: CategoryUpdateInput!) {
+                    updateCategory(id: $updateCategoryId, category: $category) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    updateCategoryId: params.id,
+                    category: {
+                        "name": `${params.data.name}`,
+                        "icon": `${params.data.icon}`
+                    }
+                    },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.updateCategory) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+
+        if (type === DELETE && resource === 'Category') {
+            return {
+                query: gql`mutation Mutation($deleteCategoryId: ID!) {
+                    deleteCategory(id: $deleteCategoryId) {
+                        code
+                        message
+                    }
+                }`,
+                variables: { deleteCategoryId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data[`deleteCategory`]) {
+                        return { data: { id: params.id } };
+                    }
+
+                    throw new Error(`Could not delete ${resource}`);
+                },
+            };
+        }
+        if (type === UPDATE && resource === 'Customer') {
+            return {
+                query: gql`mutation Mutation($updateUserByAdmin: UpdateUserByAdminRequest) {
+                    updateUserByAdmin(updateUserByAdmin: $updateUserByAdmin) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    updateUserByAdmin: {
+                        "userId": params.id,
+                        "first_name": params.data.first_name,
+                        "last_name": params.data.last_name,
+                        "gender": params.data.gender,
+                        "dob": params.data.dob,
+                        "visibility": null,
+                        "lat": null,
+                        "lng": null,
+                        "about_me": null,
+                        "ready_to_meet": null,
+                        "notification_radius": null,
+                        "experience_points": null,
+                        "phone": params.data.phone,
+                        "country": params.data.country,
+                        "city": params.data.city,
+                        "image_id": null
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.updateUserByAdmin) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === UPDATE && resource === 'Articles') {
+            return {
+                query: gql`mutation UpdateArticleByAdmin($updateArticleByAdminId: ID!, $updateArticleByAdminRequest: UpdateArticleByAdminRequest) {
+                    updateArticleByAdmin(id: $updateArticleByAdminId, updateArticleByAdminRequest: $updateArticleByAdminRequest) {
+                        ... on Result {
+                            code
+                            message
+                        }
+                        ... on Article {
+                            id
+                            title
+                            short_description
+                            description
+                            viewed_count
+                            likes_count
+                            dislikes_count
+                            comments_count
+                            friendshipStatus
+                            createdAt
+                            updatedAt
+                        }
+                    }
+                }`,
+                variables: {
+                    updateArticleByAdminId: params.id,
+                    updateArticleByAdminRequest: {
+                        title: params.data.title,
+                        short_description: params.data.short_description,
+                        description: params.data.description
+                }},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.updateArticleByAdmin) {
+                        return {data: data.updateArticleByAdmin};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === GET_ONE && resource === 'Articles') {
+            return {
+                query: gql`query Query($articleId: ID!) {
+                    article(id: $articleId) {
+                        id
+                        title
+                        short_description
+                        description
+                        viewed_count
+                        likes_count
+                        dislikes_count
+                        comments_count
+                        cover_image {
+                            downloadUrl
+                        }
+                        categories {
+                            id
+                            name
+                        }
+                        likes {
+                            id
+                            user_id
+                            article_id
+                            isLike
+                            user {
+                                id
+                                first_name
+                                last_name
+                            }
+                        }
+                        dislikes {
+                            id
+                            user {
+                                id
+                                email
+                                first_name
+                                last_name
+                            }
+                        }
+                        comments {
+                            id
+                            likes_count
+                            dislikes_count
+                            user {
+                                id
+                                email
+                                first_name
+                                last_name
+                            }
+                        }
+                    }
+                }`,
+                variables: { articleId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.article) {
+                        return  {data: data.article};
+                    }
+                    throw new Error(`Error`);
+                },
+            };
+        }
+        if (type  === GET_MANY_REFERENCE && "Articles") {
+            return {
+                query: gql`query Query($categoryId: ID!) {
+                    getArticlesByCategoryId(categoryId: $categoryId) {
+                        id
+                        title
+                        short_description
+                        description
+                        viewed_count
+                        likes_count
+                        dislikes_count
+                        comments_count
+                    }
+                }`,
+                variables: { categoryId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.getArticlesByCategoryId) {
+                        return  {data: data.getArticlesByCategoryId, total: 123};
+                    }
+                    throw new Error(`Error`);
                 },
             };
         }
@@ -86,7 +332,11 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         email
                         first_name
                         last_name
+                        dob
                         gender
+                        phone
+                        country
+                        city
                     },
                 }`,
                 variables: { userId: params.id },
@@ -122,7 +372,6 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                     },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
                     const token = data.loginAdmin?.token
-                    console.log('!!!!!!!!!', token)
                     if (token) {
                         return  {data: {id: 1, token,
                                 first_name: data.loginAdmin?.first_name,

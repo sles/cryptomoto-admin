@@ -4,7 +4,7 @@ import { Link as MuiLink } from '@mui/material';
 import { useRecordContext } from 'react-admin';
 import { Product } from '../types';
 
-const ProductRefField = () => {
+const ArticleRefField = () => {
     const record = useRecordContext<Product>();
     return record ? (
         <MuiLink
@@ -12,14 +12,14 @@ const ProductRefField = () => {
             to={`/articles/${record.id}`}
             underline="none"
         >
-            {record.reference}
+            {record.title}
         </MuiLink>
     ) : null;
 };
 
-ProductRefField.defaultProps = {
+ArticleRefField.defaultProps = {
     source: 'id',
-    label: 'Reference',
+    label: 'Title',
 };
 
-export default ProductRefField;
+export default ArticleRefField;

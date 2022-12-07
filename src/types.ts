@@ -18,6 +18,10 @@ export interface Product extends RaRecord {
     width: number;
 }
 
+export interface Article extends RaRecord {
+    title: string
+}
+
 export interface Customer extends RaRecord {
     first_name: string;
     last_name: string;
@@ -35,8 +39,12 @@ export interface Customer extends RaRecord {
     groups: string[];
     nb_commands: number;
     total_spent: number;
-}
 
+    accountLevel: AccountLevel
+}
+export interface AccountLevel  extends RaRecord {
+    name: string
+}
 export type OrderStatus = 'ordered' | 'delivered' | 'cancelled';
 
 export interface Order extends RaRecord {

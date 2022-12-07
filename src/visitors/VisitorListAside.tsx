@@ -29,8 +29,8 @@ const Aside = () => (
             alignSelf: 'flex-start',
         }}
     >
-        <CardContent sx={{ pt: 1 }}>
-            <FilterLiveSearch />
+        {/*<CardContent sx={{ pt: 1 }}>*/}
+            {/*<FilterLiveSearch />*/}
 
             {/*<FilterList*/}
             {/*    label="resources.customers.filters.last_visited"*/}
@@ -135,7 +135,7 @@ const Aside = () => (
             {/*        />*/}
             {/*    ))}*/}
             {/*</FilterList>*/}
-        </CardContent>
+        {/*</CardContent>*/}
     </Card>
 );
 

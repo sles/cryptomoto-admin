@@ -7,7 +7,7 @@ import { stringify } from 'query-string';
 import products from '../products';
 import { Category } from '../types';
 
-const LinkToRelatedProducts = () => {
+const LinkToRelatedArticles = () => {
     const record = useRecordContext<Category>();
     const translate = useTranslate();
     if (!record) return null;
@@ -17,7 +17,7 @@ const LinkToRelatedProducts = () => {
             color="primary"
             component={Link}
             to={{
-                pathname: '/products',
+                pathname: '/articles',
                 search: stringify({
                     filter: JSON.stringify({ category_id: record.id }),
                 }),
@@ -25,9 +25,9 @@ const LinkToRelatedProducts = () => {
             sx={{ display: 'inline-flex', alignItems: 'center' }}
         >
             <products.icon sx={{ paddingRight: '0.5em' }} />
-            {translate('resources.categories.fields.products')}
+            {translate('resources.categories.fields.articles')}
         </Button>
     );
 };
 
-export default LinkToRelatedProducts;
+export default LinkToRelatedArticles;

@@ -48,121 +48,121 @@ const EventList = () => {
     const translate = useTranslate();
     const [locale] = useLocaleState();
 
-    const { data: orders } = useGetList<OrderRecord>('commands', {
-        pagination: { page: 1, perPage: 100 },
-        sort: { field: 'date', order: 'DESC' },
-        filter: { customer_id: record.id },
-    });
-    const { data: reviews } = useGetList<ReviewRecord>('reviews', {
-        pagination: { page: 1, perPage: 100 },
-        sort: { field: 'date', order: 'DESC' },
-        filter: { customer_id: record.id },
-    });
-    const events = mixOrdersAndReviews(orders, reviews);
+    // const { data: orders } = useGetList<OrderRecord>('commands', {
+    //     pagination: { page: 1, perPage: 100 },
+    //     sort: { field: 'date', order: 'DESC' },
+    //     filter: { customer_id: record.id },
+    // });
+    // const { data: reviews } = useGetList<ReviewRecord>('reviews', {
+    //     pagination: { page: 1, perPage: 100 },
+    //     sort: { field: 'date', order: 'DESC' },
+    //     filter: { customer_id: record.id },
+    // });
+    // const events = mixOrdersAndReviews(orders, reviews);
     return (
         <Box ml={2}>
             <Card>
-                <CardContent>
-                    <Typography variant="h6" gutterBottom>
-                        {translate('resources.customers.fieldGroups.history')}
-                    </Typography>
-                    <Grid container rowSpacing={1} columnSpacing={1}>
-                        <Grid item xs={6} display="flex" gap={1}>
-                            <AccessTimeIcon fontSize="small" color="disabled" />
-                            <Box flexGrow={1}>
-                                <Typography variant="body2">
-                                    {translate(
-                                        'resources.customers.fields.first_seen'
-                                    )}
-                                </Typography>
-                                <DateField
-                                    record={record}
-                                    source="first_seen"
-                                />
-                            </Box>
-                        </Grid>
-                        {orders && (
-                            <Grid item xs={6} display="flex" gap={1}>
-                                <order.icon fontSize="small" color="disabled" />
-                                <Typography variant="body2" flexGrow={1}>
-                                    {translate('resources.commands.amount', {
-                                        smart_count: orders.length,
-                                    })}
-                                </Typography>
-                            </Grid>
-                        )}
-                        <Grid item xs={6} display="flex" gap={1}>
-                            <AccessTimeIcon fontSize="small" color="disabled" />
-                            <Box flexGrow={1}>
-                                <Typography variant="body2">
-                                    {translate(
-                                        'resources.customers.fields.last_seen'
-                                    )}
-                                </Typography>
-                                <DateField record={record} source="last_seen" />
-                            </Box>
-                        </Grid>
-                        {reviews && (
-                            <Grid item xs={6} display="flex" gap={1}>
-                                <review.icon
-                                    fontSize="small"
-                                    color="disabled"
-                                />
-                                <Typography variant="body2" flexGrow={1}>
-                                    {translate('resources.reviews.amount', {
-                                        smart_count: reviews.length,
-                                    })}
-                                </Typography>
-                            </Grid>
-                        )}
-                    </Grid>
-                </CardContent>
+                {/*<CardContent>*/}
+                {/*    /!*<Typography variant="h6" gutterBottom>*!/*/}
+                {/*    /!*    {translate('resources.customers.fieldGroups.history')}*!/*/}
+                {/*    /!*</Typography>*!/*/}
+                {/*    <Grid container rowSpacing={1} columnSpacing={1}>*/}
+                {/*        <Grid item xs={6} display="flex" gap={1}>*/}
+                {/*            <AccessTimeIcon fontSize="small" color="disabled" />*/}
+                {/*            <Box flexGrow={1}>*/}
+                {/*                <Typography variant="body2">*/}
+                {/*                    {translate(*/}
+                {/*                        'resources.customers.fields.first_seen'*/}
+                {/*                    )}*/}
+                {/*                </Typography>*/}
+                {/*                <DateField*/}
+                {/*                    record={record}*/}
+                {/*                    source="first_seen"*/}
+                {/*                />*/}
+                {/*            </Box>*/}
+                {/*        </Grid>*/}
+                {/*        {orders && (*/}
+                {/*            <Grid item xs={6} display="flex" gap={1}>*/}
+                {/*                <order.icon fontSize="small" color="disabled" />*/}
+                {/*                <Typography variant="body2" flexGrow={1}>*/}
+                {/*                    {translate('resources.commands.amount', {*/}
+                {/*                        smart_count: orders.length,*/}
+                {/*                    })}*/}
+                {/*                </Typography>*/}
+                {/*            </Grid>*/}
+                {/*        )}*/}
+                {/*        <Grid item xs={6} display="flex" gap={1}>*/}
+                {/*            <AccessTimeIcon fontSize="small" color="disabled" />*/}
+                {/*            <Box flexGrow={1}>*/}
+                {/*                <Typography variant="body2">*/}
+                {/*                    {translate(*/}
+                {/*                        'resources.customers.fields.last_seen'*/}
+                {/*                    )}*/}
+                {/*                </Typography>*/}
+                {/*                <DateField record={record} source="last_seen" />*/}
+                {/*            </Box>*/}
+                {/*        </Grid>*/}
+                {/*        {reviews && (*/}
+                {/*            <Grid item xs={6} display="flex" gap={1}>*/}
+                {/*                <review.icon*/}
+                {/*                    fontSize="small"*/}
+                {/*                    color="disabled"*/}
+                {/*                />*/}
+                {/*                <Typography variant="body2" flexGrow={1}>*/}
+                {/*                    {translate('resources.reviews.amount', {*/}
+                {/*                        smart_count: reviews.length,*/}
+                {/*                    })}*/}
+                {/*                </Typography>*/}
+                {/*            </Grid>*/}
+                {/*        )}*/}
+                {/*    </Grid>*/}
+                {/*</CardContent>*/}
             </Card>
 
-            <Stepper orientation="vertical" sx={{ mt: 1 }}>
-                {events.map(event => (
-                    <Step
-                        key={`${event.type}-${event.data.id}`}
-                        expanded
-                        active
-                        completed
-                    >
-                        <StepLabel
-                            icon={
-                                event.type === 'order' ? (
-                                    <order.icon
-                                        color="disabled"
-                                        sx={{ pl: 0.5, fontSize: '1.25rem' }}
-                                    />
-                                ) : (
-                                    <review.icon
-                                        color="disabled"
-                                        sx={{ pl: 0.5, fontSize: '1.25rem' }}
-                                    />
-                                )
-                            }
-                        >
-                            {new Date(event.date).toLocaleString(locale, {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                            })}
-                        </StepLabel>
-                        <StepContent>
-                            <RecordContextProvider value={event.data}>
-                                {event.type === 'order' ? (
-                                    <Order />
-                                ) : (
-                                    <Review />
-                                )}
-                            </RecordContextProvider>
-                        </StepContent>
-                    </Step>
-                ))}
-            </Stepper>
+            {/*<Stepper orientation="vertical" sx={{ mt: 1 }}>*/}
+            {/*    {events.map(event => (*/}
+            {/*        <Step*/}
+            {/*            key={`${event.type}-${event.data.id}`}*/}
+            {/*            expanded*/}
+            {/*            active*/}
+            {/*            completed*/}
+            {/*        >*/}
+            {/*            /!*<StepLabel*!/*/}
+            {/*            /!*    icon={*!/*/}
+            {/*            /!*        event.type === 'order' ? (*!/*/}
+            {/*            /!*            <order.icon*!/*/}
+            {/*            /!*                color="disabled"*!/*/}
+            {/*            /!*                sx={{ pl: 0.5, fontSize: '1.25rem' }}*!/*/}
+            {/*            /!*            />*!/*/}
+            {/*            /!*        ) : (*!/*/}
+            {/*            /!*            <review.icon*!/*/}
+            {/*            /!*                color="disabled"*!/*/}
+            {/*            /!*                sx={{ pl: 0.5, fontSize: '1.25rem' }}*!/*/}
+            {/*            /!*            />*!/*/}
+            {/*            /!*        )*!/*/}
+            {/*            /!*    }*!/*/}
+            {/*            /!*>*!/*/}
+            {/*            /!*    {new Date(event.date).toLocaleString(locale, {*!/*/}
+            {/*            /!*        weekday: 'long',*!/*/}
+            {/*            /!*        year: 'numeric',*!/*/}
+            {/*            /!*        month: 'short',*!/*/}
+            {/*            /!*        day: 'numeric',*!/*/}
+            {/*            /!*        hour: 'numeric',*!/*/}
+            {/*            /!*        minute: 'numeric',*!/*/}
+            {/*            /!*    })}*!/*/}
+            {/*            /!*</StepLabel>*!/*/}
+            {/*            <StepContent>*/}
+            {/*                /!*<RecordContextProvider value={event.data}>*!/*/}
+            {/*                /!*    {event.type === 'order' ? (*!/*/}
+            {/*                /!*        <Order />*!/*/}
+            {/*                /!*    ) : (*!/*/}
+            {/*                /!*        // <Review />*!/*/}
+            {/*                /!*    )}*!/*/}
+            {/*                /!*</RecordContextProvider>*!/*/}
+            {/*            </StepContent>*/}
+            {/*        </Step>*/}
+            {/*    ))}*/}
+            {/*</Stepper>*/}
         </Box>
     );
 };
@@ -204,25 +204,25 @@ const Order = () => {
     if (!record) return null;
     return (
         <>
-            <Typography variant="body2" gutterBottom>
-                <Link to={`/commands/${record.id}`} component={RouterLink}>
-                    {translate('resources.commands.name', { smart_count: 1 })}
-                    &nbsp;#{record.reference}
-                </Link>
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-                {translate('resources.commands.nb_items', {
-                    smart_count: record.basket.length,
-                    _: '1 item |||| %{smart_count} items',
-                })}
-                &nbsp;-&nbsp;
-                <NumberField
-                    source="total"
-                    options={{ style: 'currency', currency: 'USD' }}
-                />
-                &nbsp;-&nbsp;
-                <TextField source="status" />
-            </Typography>
+            {/*<Typography variant="body2" gutterBottom>*/}
+            {/*    <Link to={`/commands/${record.id}`} component={RouterLink}>*/}
+            {/*        {translate('resources.commands.name', { smart_count: 1 })}*/}
+            {/*        &nbsp;#{record.reference}*/}
+            {/*    </Link>*/}
+            {/*</Typography>*/}
+            {/*<Typography variant="body2" color="textSecondary">*/}
+            {/*    {translate('resources.commands.nb_items', {*/}
+            {/*        smart_count: record.basket.length,*/}
+            {/*        _: '1 item |||| %{smart_count} items',*/}
+            {/*    })}*/}
+            {/*    &nbsp;-&nbsp;*/}
+            {/*    <NumberField*/}
+            {/*        source="total"*/}
+            {/*        options={{ style: 'currency', currency: 'USD' }}*/}
+            {/*    />*/}
+            {/*    &nbsp;-&nbsp;*/}
+            {/*    <TextField source="status" />*/}
+            {/*</Typography>*/}
         </>
     );
 };

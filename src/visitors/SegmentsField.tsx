@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Stack, Chip } from '@mui/material';
-import { FieldProps, useTranslate, useRecordContext } from 'react-admin';
+import {Stack, Chip, Typography} from '@mui/material';
+import {FieldProps, useTranslate, useRecordContext, TextField} from 'react-admin';
 import segments from '../segments/data';
 import { Customer } from '../types';
 
@@ -12,19 +12,13 @@ const segmentsById = segments.reduce((acc, segment) => {
 const SegmentsField = (props: FieldProps) => {
     const translate = useTranslate();
     const record = useRecordContext<Customer>();
-    if (!record || !record.groups) {
+    if (!record || !record.accountLevel) {
         return null;
     }
     return (
-        <Stack direction="row" gap={1} flexWrap="wrap">
-            {record.groups.map(segmentId => (
-                <Chip
-                    size="small"
-                    key={segmentId}
-                    label={translate(segmentsById[segmentId].name)}
-                />
-            ))}
-        </Stack>
+        <Typography>
+            {record.accountLevel.name}
+        </Typography>
     );
 };
 

@@ -10,7 +10,7 @@ import {
     Typography,
 } from '@mui/material';
 
-import LinkToRelatedProducts from './LinkToRelatedProducts';
+import LinkToRelatedArticles from '../categories/LinkToRelatedArticles';
 import { Category } from '../types';
 
 const CategoryList = () => (
@@ -35,10 +35,10 @@ const CategoryGrid = () => {
             {data.map(record => (
                 <Grid key={record.id} xs={12} sm={6} md={4} lg={3} xl={2} item>
                     <Card>
-                        <CardMedia
-                            image={`https://marmelab.com/posters/${record.name}-1.jpeg`}
-                            sx={{ height: 140 }}
-                        />
+                        {/*<CardMedia*/}
+                        {/*    image={`https://marmelab.com/posters/${record.name}-1.jpeg`}*/}
+                        {/*    sx={{ height: 140 }}*/}
+                        {/*/>*/}
                         <CardContent sx={{ paddingBottom: '0.5em' }}>
                             <Typography
                                 variant="h5"
@@ -56,7 +56,7 @@ const CategoryGrid = () => {
                                 },
                             }}
                         >
-                            <LinkToRelatedProducts />
+                            {/*<LinkToRelatedArticles />*/}
                             <EditButton record={record} />
                         </CardActions>
                     </Card>

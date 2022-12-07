@@ -9,20 +9,23 @@ import {
     SimpleForm,
     TextInput,
     useTranslate,
-    useRecordContext,
+    useRecordContext, TextField, ShowButton, DeleteButton,
 } from 'react-admin';
 
 import ThumbnailField from '../products/ThumbnailField';
 import ProductRefField from '../products/ProductRefField';
 import { Category } from '../types';
-
+import ArticleRefField from "../articles/ArticleRefField";
+const ArticleShowButton = () => <ShowButton label="Show" />;
+const ArticleDeleteButton = () => <DeleteButton label="Delete"/>;
 const CategoryEdit = () => (
     <Edit title={<CategoryTitle />}>
         <SimpleForm>
             <TextInput source="name" />
-            <Labeled label="resources.categories.fields.products" fullWidth>
+            <TextInput source="icon" />
+            <Labeled label="Articles" fullWidth>
                 <ReferenceManyField
-                    reference="products"
+                    reference="articles"
                     target="category_id"
                     perPage={20}
                 >
@@ -35,22 +38,15 @@ const CategoryEdit = () => (
                         }}
                     >
                         <ThumbnailField source="thumbnail" label="" />
-                        <ProductRefField source="reference" />
-                        <NumberField
-                            source="price"
-                            options={{ style: 'currency', currency: 'USD' }}
-                        />
-                        <NumberField
-                            source="width"
-                            options={{ minimumFractionDigits: 2 }}
-                        />
-                        <NumberField
-                            source="height"
-                            options={{ minimumFractionDigits: 2 }}
-                        />
-                        <NumberField source="stock" />
-                        <NumberField source="sales" />
-                        <EditButton />
+                        <ArticleRefField source="title" />
+                        <TextField source="short_description" />
+                        <TextField source="description" />
+                        <NumberField source="viewed_count" />
+                        <NumberField source="likes_count" />
+                        <NumberField source="dislikes_count" />
+                        <NumberField source="comments_count" />
+                        <ArticleShowButton/>
+                        <ArticleDeleteButton/>
                     </Datagrid>
                 </ReferenceManyField>
             </Labeled>

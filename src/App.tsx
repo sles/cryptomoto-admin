@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Admin, CustomRoutes, Resource } from 'react-admin';
+import {Admin, CustomRoutes, EditGuesser, ListGuesser, Resource, ShowGuesser} from 'react-admin';
 import polyglotI18nProvider from 'ra-i18n-polyglot';
 import { Route } from 'react-router';
 
@@ -18,6 +18,9 @@ import dataProviderFactory from './dataProvider';
 import Configuration from './configuration/Configuration';
 import Segments from './segments/Segments';
 import { createBrowserHistory as createHistory } from 'history';
+import {ArticleList} from "./articles/ArticleList";
+import {ArticleEdit} from "./articles/ArticleEdit";
+import {ArticleShow} from "./articles/ArticleShow";
 
 const i18nProvider = polyglotI18nProvider(locale => {
     if (locale === 'fr') {
@@ -39,7 +42,7 @@ const App = () => {
                 process.env.REACT_APP_DATA_PROVIDER || ''
             )}
             authProvider={authProvider}
-            dashboard={Dashboard}
+            // dashboard={Dashboard}
             loginPage={Login}
             layout={Layout}
             i18nProvider={i18nProvider}
@@ -59,6 +62,11 @@ const App = () => {
             <Resource name="invoices" {...invoices} />
             <Resource name="products" {...products} />
             <Resource name="categories" {...categories} />
+
+            <Resource name="articles" list={ArticleList}
+                      // create={EditGuesser}
+                      edit={ArticleEdit}
+                      show={ArticleShow} />
             {/*<Resource name="reviews" {...reviews} />*/}
         </Admin>
     );

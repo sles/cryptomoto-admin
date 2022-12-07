@@ -7,7 +7,6 @@ import {ShowGuesser} from "react-admin";
 
 const resource = {
     list: VisitorList,
-    create: VisitorCreate,
     edit: VisitorEdit,
     show: ShowGuesser,
     icon: VisitorIcon,
