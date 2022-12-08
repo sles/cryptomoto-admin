@@ -535,7 +535,6 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
             };
         }
         if (resource === 'Articles' && type === CREATE) {
-            console.log(params)
             return {
                 query: gql`mutation ArticleCreationByAdmin($articleCreationByAdminRequest: ArticleCreateByAdminInput) {
                     articleCreationByAdmin(articleCreationByAdminRequest: $articleCreationByAdminRequest) {
@@ -550,7 +549,7 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 }`,
                 variables: {
                     articleCreationByAdminRequest: {
-                        "image_id": "ef455a8b-27a6-4ff1-ba9d-cd291ba76501",
+                        "image_id": "c174b910-d227-492a-b981-780de5d9de33",
                         "priority": params.data.priority,
                         "description": params.data.description,
                         "short_description": params.data.short_description,
