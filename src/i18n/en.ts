@@ -54,6 +54,8 @@ const customEnglishMessages: TranslationMessages = {
                 confirm_password: 'Confirm password',
                 stateAbbr: 'State',
             },
+            about_me: 'About me',
+            coordinates: "Coordinates",
             filters: {
                 last_visited: 'Last visited',
                 today: 'Today',

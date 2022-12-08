@@ -18,7 +18,8 @@ const getGqlResource = (resource: string) => {
 
         case 'articles':
             return "Articles";
-
+        case "Articles":
+            return "Articles";
         case 'products':
             return 'Product';
 
@@ -64,25 +65,43 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
         }
 
         if (type === GET_LIST && resource === 'Articles') {
+            const sort =  params.sort.field;
             return {
-                query: gql`query Query($search: String) {
-                    getArticlesForAdmin(search: $search) {
-                        id
-                        title
-                        short_description
-                        description
-                        viewed_count
-                        likes_count
-                        dislikes_count
-                        comments_count
+                query: gql`query Query($paginationRequest: PaginationAndSearch) {
+                    getArticlesForAdmin(paginationRequest: $paginationRequest) {
+                        totalPages
+                        currentPage
+                        totalItems
+                        tutorials {
+                            id
+                            title
+                            short_description
+                            description
+                            viewed_count
+                            likes_count
+                            dislikes_count
+                            comments_count
+                            cover_image {
+                                id
+                                downloadUrl
+                            }
+                        }
                     }
                 }`,
-                variables: {search: null},
+                variables: {
+                    paginationRequest: {
+                        "search": params.filter.q,
+                        "page": params.pagination.page,
+                        "size": params.pagination.perPage,
+                        "sortBy": sort,
+                        "sortOrder": params.sort.order
+                    }
+                },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
                     if (data.getArticlesForAdmin) {
-                        return  {data: data.getArticlesForAdmin, total: 123};
+                        return  {data: data.getArticlesForAdmin.tutorials, total: data.getArticlesForAdmin.totalItems};
                     }
-                    throw new Error(`Could not delete ${resource}`);
+                    throw new Error(`Error`);
                 },
             };
         }
@@ -106,7 +125,6 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
             }
         }
         if (type === UPDATE && resource === 'Category') {
-            console.log('edhbvejhdbvjebv', params)
             return {
                 query: gql`mutation Mutation($updateCategoryId: ID!, $category: CategoryUpdateInput!) {
                     updateCategory(id: $updateCategoryId, category: $category) {
@@ -173,7 +191,8 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         "phone": params.data.phone,
                         "country": params.data.country,
                         "city": params.data.city,
-                        "image_id": null
+                        "image_id": null,
+                        "is_activated": params.data.is_activated,
                     }
                 },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
@@ -184,7 +203,33 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 },
             }
         }
+
+        if (type === DELETE && resource === 'Customer') {
+            return {
+                query: gql`mutation Mutation($deleteUserId: ID!) {
+                    deleteUser(id: $deleteUserId) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {deleteUserId: params.id},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.deleteUser.code === 200) {
+                        return {data: {id: params.id}};
+                    } else {
+                        throw new Error(data.deleteUser.message);
+                    }
+
+                },
+            }
+        }
         if (type === UPDATE && resource === 'Articles') {
+            const categoryIds = params.data.categories.map((category: any) => {
+                return {
+                    id: category.id,
+                    name: category.name
+                }
+            })
             return {
                 query: gql`mutation UpdateArticleByAdmin($updateArticleByAdminId: ID!, $updateArticleByAdminRequest: UpdateArticleByAdminRequest) {
                     updateArticleByAdmin(id: $updateArticleByAdminId, updateArticleByAdminRequest: $updateArticleByAdminRequest) {
@@ -212,7 +257,7 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                     updateArticleByAdminRequest: {
                         title: params.data.title,
                         short_description: params.data.short_description,
-                        description: params.data.description
+                        description: params.data.description,
                 }},
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
                     if (data.updateArticleByAdmin) {
@@ -332,12 +377,17 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         email
                         first_name
                         last_name
-                        dob
                         gender
+                        dob
+                        profile_image {
+                            downloadUrl
+                        }
+                        about_me
+                        is_activated
                         phone
                         country
                         city
-                    },
+                    }
                 }`,
                 variables: { userId: params.id },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
@@ -424,27 +474,44 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
             };
         }
         if (type === GET_LIST && resource === 'Customer') {
+            const sort = params.sort.field === 'customer_id' ? 'first_name': params.sort.field;
             return {
-                query: gql`query Query {
-                    users {
-                        id
-                        email
-                        first_name
-                        last_name
-                        createdAt
-                        profile_image {
-                            downloadUrl
-                        }
-                        experience_points
-                        accountLevel {
-                            name
+                query: gql`query Query($paginationRequest: PaginationAndSearch) {
+                    getUsersForAdmin(paginationRequest: $paginationRequest) {
+                        totalPages
+                        currentPage
+                        totalItems
+                        tutorials {
                             id
+                            createAt
+                            status
+                            email
+                            first_name
+                            last_name
+                            createdAt
+                            profile_image {
+                                downloadUrl
+                            }
+                            accountLevel {
+                                id
+                                name
+                            }
+                            experience_points
                         }
                     }
                 }`,
+                variables: {
+                    paginationRequest: {
+                        "search": params.filter.q,
+                        "page": params.pagination.page,
+                        "size": params.pagination.perPage,
+                        "sortBy": sort === "accountLevel" ? null: sort,
+                        "sortOrder": params.sort.order
+                    }
+                },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
-                    if (data.users) {
-                        return  {data: data.users, total: 123};
+                    if (data.getUsersForAdmin) {
+                        return  {data: data.getUsersForAdmin.tutorials, total: data.getUsersForAdmin.totalItems};
                     }
                     throw new Error(`Could not delete ${resource}`);
                 },
@@ -467,57 +534,77 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 },
             };
         }
-
-        if (resource === 'Customer' && type === CREATE) {
+        if (resource === 'Articles' && type === CREATE) {
+            console.log(params)
             return {
-                query: gql`
-                    mutation createCustomer(
-                        $first_name: String!
-                        $last_name: String!
-                        $email: String!
-                        $address: String
-                        $zipcode: String
-                        $city: String
-                        $stateAbbr: String
-                        $birthday: Date
-                        $first_seen: Date!
-                        $last_seen: Date!
-                        $has_ordered: Boolean!
-                        $latest_purchase: Date
-                        $has_newsletter: Boolean!
-                        $groups: [String]!
-                        $nb_commands: Int!
-                        $total_spent: Float!
-                    ) {
-                        createCustomer(
-                            first_name: $first_name
-                            last_name: $last_name
-                            email: $email
-                            address: $address
-                            zipcode: $zipcode
-                            city: $city
-                            stateAbbr: $stateAbbr
-                            birthday: $birthday
-                            first_seen: $first_seen
-                            last_seen: $last_seen
-                            has_ordered: $has_ordered
-                            latest_purchase: $latest_purchase
-                            has_newsletter: $has_newsletter
-                            groups: $groups
-                            nb_commands: $nb_commands
-                            total_spent: $total_spent
-                        ) {
+                query: gql`mutation ArticleCreationByAdmin($articleCreationByAdminRequest: ArticleCreateByAdminInput) {
+                    articleCreationByAdmin(articleCreationByAdminRequest: $articleCreationByAdminRequest) {
+                        ... on Result {
+                            code
+                            message
+                        }
+                        ... on Article {
                             id
                         }
                     }
-                `,
-                variables: params.data,
+                }`,
+                variables: {
+                    articleCreationByAdminRequest: {
+                        "image_id": "ef455a8b-27a6-4ff1-ba9d-cd291ba76501",
+                        "priority": params.data.priority,
+                        "description": params.data.description,
+                        "short_description": params.data.short_description,
+                        "title": params.data.title,
+                        "category_ids": params.data.categories
+                    }
+                },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
-                    if (data.createCustomer) {
-                        return { data: { id: data.createCustomer.id } };
+                    if (data.articleCreationByAdmin.id) {
+                        return { data: { id: data.articleCreationByAdmin.id } };
+                    } else {
+                        throw new Error(`${data.articleCreationByAdmin.message}`);
+                    }
+                },
+            };
+        }
+        if (resource === 'Customer' && type === CREATE) {
+            return {
+                query: gql`mutation Mutation($addingUserByAdminRequest: AddingUserByAdminRequest) {
+                    addingUserByAdmin(addingUserByAdminRequest: $addingUserByAdminRequest) {
+                        ... on Result {
+                            code
+                            message
+                        }
+                        ... on User {
+                            id
+                        }
+                    }
+                }`,
+                variables: {
+                    addingUserByAdminRequest: {
+                        "status": params.data.status,
+                        "email": params.data.email,
+                        "first_name": params.data.first_name,
+                        "last_name": params.data.last_name,
+                        "password": params.data.password,
+                        "dob": params.data.dob,
+                        "avatar": null,
+                        "about_me": params.data.about_me,
+                        "lat": params.data.lat,
+                        "lng": params.data.lng,
+                        "country": params.data.country,
+                        "city": params.data.city,
+                        "phone": params.data.phone
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (!data.addingUserByAdmin.message) {
+                        return { data: { id: data.addingUserByAdmin.id } };
+                    } else {
+                        throw new Error(`${data.addingUserByAdmin.message}`);
                     }
 
-                    throw new Error(`Could not create Customer`);
+
                 },
             };
         }

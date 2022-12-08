@@ -30,7 +30,7 @@ const Aside = () => (
         }}
     >
         {/*<CardContent sx={{ pt: 1 }}>*/}
-            {/*<FilterLiveSearch />*/}
+            <FilterLiveSearch />
 
             {/*<FilterList*/}
             {/*    label="resources.customers.filters.last_visited"*/}

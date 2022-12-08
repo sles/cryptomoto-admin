@@ -6,7 +6,7 @@ import {
     TextInput,
     useTranslate,
     PasswordInput,
-    email,
+    email, BooleanInput, NumberField,
 } from 'react-admin';
 import { Box, Typography } from '@mui/material';
 
@@ -42,14 +42,6 @@ const VisitorCreate = () => (
             // Here for the GQL provider
             defaultValues={{
                 birthday: new Date(),
-                first_seen: new Date(),
-                last_seen: new Date(),
-                has_ordered: false,
-                latest_purchase: new Date(),
-                has_newsletter: false,
-                groups: [],
-                nb_commands: 0,
-                total_spent: 0,
             }}
             validate={validateForm}
         >
@@ -62,12 +54,36 @@ const VisitorCreate = () => (
                     <TextInput source="last_name" isRequired fullWidth />
                 </Box>
             </Box>
+            <Box>
+                <BooleanInput label="Activated" source="status" />
+            </Box>
             <TextInput type="email" source="email" isRequired fullWidth />
-            <DateInput source="birthday" />
+            <DateInput label="Birthday" source="dob" />
             <Separator />
-            <SectionTitle label="About me" />
-            <TextInput source="teaser" multiline fullWidth={true}  />
+            <Typography variant="h6" gutterBottom>
+                {"Address"}
+            </Typography>
+            <TextInput
+                source="country"
+                multiline
+                fullWidth
+                helperText={false}
+            />
+            <Box display={{ xs: 'block', sm: 'flex' }}>
+                <Box flex={2} mr={{ xs: 0, sm: '0.5em' }}>
+                    <TextInput
+                        source="city"
+                        fullWidth
+                        helperText={false}
+                    />
+                </Box>
+            </Box>
 
+            <Box mt="1em" />
+            <Separator/>
+            <SectionTitle label="resources.users.about_me" />
+            <TextInput label="resources.users.about_me" source="about_me" multiline fullWidth={true}  />
+            <TextInput label="Phone" source="phone"/>
             <Separator />
             <SectionTitle label="resources.users.fieldGroups.password" />
             <Box display={{ xs: 'block', sm: 'flex' }}>

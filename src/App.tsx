@@ -5,12 +5,10 @@ import { Route } from 'react-router';
 
 import authProvider from './authProvider';
 import { Login, Layout } from './layout';
-import { Dashboard } from './dashboard';
 import englishMessages from './i18n/en';
 import { lightTheme } from './layout/themes';
 
 import visitors from './visitors';
-import orders from './orders';
 import products from './products';
 import invoices from './invoices';
 import categories from './categories';
@@ -21,6 +19,7 @@ import { createBrowserHistory as createHistory } from 'history';
 import {ArticleList} from "./articles/ArticleList";
 import {ArticleEdit} from "./articles/ArticleEdit";
 import {ArticleShow} from "./articles/ArticleShow";
+import ArticleCreate from "./articles/ArticleCreate";
 
 const i18nProvider = polyglotI18nProvider(locale => {
     if (locale === 'fr') {
@@ -64,7 +63,7 @@ const App = () => {
             <Resource name="categories" {...categories} />
 
             <Resource name="articles" list={ArticleList}
-                      // create={EditGuesser}
+                      create={ArticleCreate}
                       edit={ArticleEdit}
                       show={ArticleShow} />
             {/*<Resource name="reviews" {...reviews} />*/}

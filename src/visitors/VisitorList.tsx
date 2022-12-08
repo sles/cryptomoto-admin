@@ -38,8 +38,7 @@ const VisitorList = () => {
             sort={{ field: 'last_seen', order: 'DESC' }}
             perPage={25}
             exporter={false}
-            pagination={false}
-            // aside={<VisitorListAside />}
+            aside={<VisitorListAside />}
         >
             {isXsmall ? (
                 <MobileGrid />
@@ -54,6 +53,7 @@ const VisitorList = () => {
                         },
                     }}
                 >
+                    <TextField source="id"/>
                     <CustomerLinkField />
                     <TextField source="email"/>
                     <DateField source="createdAt" />

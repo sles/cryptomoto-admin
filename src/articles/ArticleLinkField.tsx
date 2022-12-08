@@ -17,7 +17,7 @@ const ArticleLinkField = (props: FieldProps<Article>) => {
 };
 
 ArticleLinkField.defaultProps = {
-    source: 'article_id',
+    source: 'title',
 };
 
 export default ArticleLinkField;

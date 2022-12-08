@@ -6,7 +6,7 @@ const ArticleShowButton = () => <ShowButton label="Show" />;
 const ArticleDeleteButton = () => <DeleteButton label="Delete"/>;
 
 export const ArticleList = () => (
-    <List exporter={false} pagination={false}>
+    <List exporter={false}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
             <ArticleLinkField/>

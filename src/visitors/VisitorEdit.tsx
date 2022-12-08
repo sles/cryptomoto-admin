@@ -6,7 +6,7 @@ import {
     TextInput,
     PasswordInput,
     SimpleForm,
-    useTranslate,
+    useTranslate, BooleanInput,
 } from 'react-admin';
 import { Grid, Box, Typography } from '@mui/material';
 
@@ -44,6 +44,9 @@ const VisitorEdit = () => {
                                     />
                                 </Box>
                             </Box>
+                            <Box>
+                                <BooleanInput label="Activated" source="is_activated" />
+                            </Box>
                             {/*<TextInput*/}
                             {/*    type="email"*/}
                             {/*    source="email"*/}
@@ -52,12 +55,7 @@ const VisitorEdit = () => {
                             {/*/>*/}
                             <Box display={{ xs: 'block', sm: 'flex' }}>
                                 <Box flex={1} mr={{ xs: 0, sm: '0.5em' }}>
-                                    <DateInput
-                                        source="dob"
-                                        fullWidth
-                                        helperText={false}
-                                        value="dob"
-                                    />
+                                    <DateInput label="Birthday" source="dob" />
                                 </Box>
                                 <Box flex={2} ml={{ xs: 0, sm: '0.5em' }} />
                             </Box>
@@ -81,56 +79,25 @@ const VisitorEdit = () => {
                                         helperText={false}
                                     />
                                 </Box>
-                                <Box flex={1} mr={{ xs: 0, sm: '0.5em' }}>
-                                    {/*<TextInput*/}
-                                    {/*    source="stateAbbr"*/}
-                                    {/*    fullWidth*/}
-                                    {/*    helperText={false}*/}
-                                    {/*/>*/}
-                                </Box>
-                                <Box flex={2}>
-                                    {/*<TextInput*/}
-                                    {/*    source="zipcode"*/}
-                                    {/*    fullWidth*/}
-                                    {/*    helperText={false}*/}
-                                    {/*/>*/}
-                                </Box>
                             </Box>
 
                             <Box mt="1em" />
-
-                            {/*<Typography variant="h6" gutterBottom>*/}
-                            {/*    {translate(*/}
-                            {/*        'resources.customers.fieldGroups.change_password'*/}
-                            {/*    )}*/}
-                            {/*</Typography>*/}
                             <Box display={{ xs: 'block', sm: 'flex' }}>
                                 <Box flex={1} mr={{ xs: 0, sm: '0.5em' }}>
-                                    {/*<PasswordInput*/}
-                                    {/*    source="password"*/}
-                                    {/*    fullWidth*/}
-                                    {/*/>*/}
+                                    <PasswordInput
+                                        source="password"
+                                        fullWidth
+                                    />
                                 </Box>
                                 <Box flex={1} ml={{ xs: 0, sm: '0.5em' }}>
-                                    {/*<PasswordInput*/}
-                                    {/*    source="confirm_password"*/}
-                                    {/*    fullWidth*/}
-                                    {/*/>*/}
+                                    <PasswordInput
+                                        source="confirm_password"
+                                        fullWidth
+                                    />
                                 </Box>
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
-                            {/*<Typography variant="h6" gutterBottom>*/}
-                            {/*    {translate(*/}
-                            {/*        'resources.customers.fieldGroups.stats'*/}
-                            {/*    )}*/}
-                            {/*</Typography>*/}
-
-                            {/*<SegmentsInput fullWidth />*/}
-                            {/*<NullableBooleanInput*/}
-                            {/*    fullWidth*/}
-                            {/*    source="has_newsletter"*/}
-                            {/*/>*/}
                         </Grid>
                     </Grid>
                 </div>

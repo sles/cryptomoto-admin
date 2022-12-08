@@ -5,7 +5,7 @@ import {
     SelectField,
     SelectInput,
     SimpleForm,
-    TextInput,
+    TextInput, useChoices, useGetList, useList,
     useRecordContext, useUnselectAll
 } from 'react-admin';
 import {Article, Category} from "../types";
@@ -18,20 +18,22 @@ const optionRenderer = (choice: any) => `${choice.first_name} ${choice.last_name
 
 
 export const ArticleEdit = () => {
-    const unselectAll = useUnselectAll('categories');
+    const { data, isLoading } = useGetList(
+        'categories',
+    );
+    const listContext = useList({ data, isLoading });
+    const categories = !isLoading ? data?.map(category => {
+        return {
+            id: category.id,
+            name: category.name
+        }
+    }) : []
     return (
         <Edit >
             <SimpleForm>
-                <TextInput source="id" />
                 <TextInput source="title" />
                 <TextInput source="short_description" />
                 <TextInput source="description" fullWidth  multiline />
-
-                {/*<SelectArrayInput*/}
-                {/*    source="categories"*/}
-                {/*    translateChoice*/}
-                {/*/>*/}
-
             </SimpleForm>
         </Edit>
     );
