@@ -35,7 +35,7 @@ const VisitorList = () => {
 
         <List
             filters={isSmall ? visitorFilters : undefined}
-            sort={{ field: 'last_seen', order: 'DESC' }}
+            sort={{ field: 'experience_points', order: 'DESC' }}
             perPage={25}
             exporter={false}
             aside={<VisitorListAside />}
