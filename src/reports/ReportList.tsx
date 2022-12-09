@@ -2,7 +2,7 @@ import { Datagrid, DateField, List, TextField } from 'react-admin';
 import AuthorLinkField from "../reports/AuthorLinkField";
 
 export const ReportList = () => (
-    <List>
+    <List exporter={false} actions={false}>
         <Datagrid rowClick="edit">
             <TextField source="id" />
             <TextField source="title" />
