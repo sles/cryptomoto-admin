@@ -16,7 +16,9 @@ import orders from '../orders';
 import invoices from '../invoices';
 import products from '../products';
 import categories from '../categories';
-// import reviews from '../reviews';
+import blockedUsers from "../blocked-users"
+import customArticles from "../custom-articles"
+import reports from "../reports"
 import SubMenu from './SubMenu';
 
 type MenuName = 'menuCatalog' | 'menuSales' | 'menuCustomers';
@@ -96,6 +98,27 @@ const Menu = ({ dense = false }: MenuProps) => {
                     leftIcon={<visitors.icon />}
                     dense={dense}
                 />
+            <MenuItemLink
+                to="/blocked-users"
+                state={{ _scrollToTop: true }}
+                primaryText="Blocked users"
+                leftIcon={<blockedUsers.icon />}
+                dense={dense}
+            />
+            <MenuItemLink
+                to="/custom-articles"
+                state={{ _scrollToTop: true }}
+                primaryText="Custom articles"
+                leftIcon={<customArticles.icon />}
+                dense={dense}
+            />
+            <MenuItemLink
+                to="/reports"
+                state={{ _scrollToTop: true }}
+                primaryText="Reports"
+                leftIcon={<reports.icon />}
+                dense={dense}
+            />
             {/*</SubMenu>*/}
             {/*<MenuItemLink*/}
             {/*    to="/reviews"*/}

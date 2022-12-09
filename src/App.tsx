@@ -12,6 +12,9 @@ import visitors from './visitors';
 import products from './products';
 import invoices from './invoices';
 import categories from './categories';
+import blockedUsers from "./blocked-users";
+import customArticles from "./custom-articles";
+import reports from "./reports";
 import dataProviderFactory from './dataProvider';
 import Configuration from './configuration/Configuration';
 import Segments from './segments/Segments';
@@ -66,7 +69,9 @@ const App = () => {
                       create={ArticleCreate}
                       edit={ArticleEdit}
                       show={ArticleShow} />
-            {/*<Resource name="reviews" {...reviews} />*/}
+            <Resource name="blocked-users" {...blockedUsers}/>
+            <Resource name="custom-articles" {...customArticles}/>
+            <Resource name="reports" {...reports}/>
         </Admin>
     );
 };

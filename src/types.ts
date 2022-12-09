@@ -22,6 +22,13 @@ export interface Article extends RaRecord {
     title: string
 }
 
+export interface CustomArticle extends RaRecord {
+    user: Customer
+}
+export interface Report extends RaRecord {
+    size: number
+}
+
 export interface Customer extends RaRecord {
     first_name: string;
     last_name: string;

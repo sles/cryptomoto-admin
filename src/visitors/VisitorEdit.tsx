@@ -6,7 +6,7 @@ import {
     TextInput,
     PasswordInput,
     SimpleForm,
-    useTranslate, BooleanInput,
+    useTranslate, BooleanInput, TextField, DateField,
 } from 'react-admin';
 import { Grid, Box, Typography } from '@mui/material';
 
@@ -83,21 +83,12 @@ const VisitorEdit = () => {
 
                             <Box mt="1em" />
                             <Box display={{ xs: 'block', sm: 'flex' }}>
-                                <Box flex={1} mr={{ xs: 0, sm: '0.5em' }}>
-                                    <PasswordInput
-                                        source="password"
-                                        fullWidth
-                                    />
-                                </Box>
-                                <Box flex={1} ml={{ xs: 0, sm: '0.5em' }}>
-                                    <PasswordInput
-                                        source="confirm_password"
-                                        fullWidth
-                                    />
-                                </Box>
                             </Box>
                         </Grid>
                         <Grid item xs={12} md={4}>
+                            <BooleanInput label="Block user" source="isBlocked" />
+                            <TextInput name="Reason For Blocking" source={"reasonForBlocking.cause"} fullWidth={true}/>
+                            <DateField source="reasonForBlocking.createdAt"/>
                         </Grid>
                     </Grid>
                 </div>

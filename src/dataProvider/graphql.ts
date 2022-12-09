@@ -10,9 +10,16 @@ import {setContext} from "@apollo/client/link/context";
 
 const getGqlResource = (resource: string) => {
     switch (resource) {
+        case 'reports':
+            return "Reports";
         case 'customers':
             return 'Customer';
-
+        case 'blocked-users':
+            return "Blocked users"
+        case 'custom-articles':
+            return 'Custom articles'
+        case "Custom articles":
+            return "Custom articles";
         case 'categories':
             return 'Category';
 
@@ -45,7 +52,94 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
     return (type, resource, params) => {
         console.log('customBuildQuery return');
         console.log(type, resource, params)
-        const token = localStorage.getItem("token");
+
+        if (type === GET_LIST && resource === 'Reports') {
+            const sort =  params.sort.field === 'author_id'? null: params.sort.field;
+            return {
+                query: gql`query Query($paginationRequest: PaginationAndSearch) {
+                    getReportsForAdmin(paginationRequest: $paginationRequest) {
+                        totalPages
+                        currentPage
+                        totalItems
+                        tutorials {
+                            id
+                            title
+                            user {
+                                id
+                                first_name
+                                last_name
+                                profile_image {
+                                    downloadUrl
+                                }
+                            }
+                            user_message
+                            user_comment
+                            reason
+                            comment
+                            createdAt
+                            status
+                        }
+                    }
+                }`,
+                variables: {
+                    paginationRequest: {
+                        "search": params.filter.q,
+                        "page": params.pagination.page,
+                        "size": params.pagination.perPage,
+                        "sortBy": sort,
+                        "sortOrder": params.sort.order
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.getReportsForAdmin) {
+                        return  {data: data.getReportsForAdmin.tutorials, total: data.getReportsForAdmin.totalItems};
+                    }
+                    throw new Error(`Errors`);
+                },
+            };
+        }
+        if (type === GET_LIST && resource === 'Custom articles') {
+            const sort =  params.sort.field === 'author_id'? null: params.sort.field;
+            return {
+                query: gql`query GetArticlesOnModeration($paginationRequest: PaginationAndSearch) {
+                    getArticlesOnModeration(paginationRequest: $paginationRequest) {
+                        totalPages
+                        currentPage
+                        totalItems
+                        tutorials {
+                            id
+                            title
+                            short_description
+                            description
+                            user {
+                                id
+                                email
+                                first_name
+                                last_name
+                                profile_image {
+                                    downloadUrl
+                                }
+                            }
+                        }
+                    }
+                }`,
+                variables: {
+                    paginationRequest: {
+                        "search": params.filter.q,
+                        "page": params.pagination.page,
+                        "size": params.pagination.perPage,
+                        "sortBy": sort,
+                        "sortOrder": params.sort.order
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.getArticlesOnModeration) {
+                        return  {data: data.getArticlesOnModeration.tutorials, total: data.getArticlesOnModeration.totalItems};
+                    }
+                    throw new Error(`Could not delete ${resource}`);
+                },
+            };
+        }
         if (type === GET_LIST && resource === 'Category') {
             return {
                 query: gql`query Query {
@@ -62,6 +156,96 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                     throw new Error(`Could not delete ${resource}`);
                 },
             };
+        }
+        if (type === GET_ONE && resource === 'Reports') {
+            return {
+                query: gql`query Report($reportId: ID!) {
+                    report(id: $reportId) {
+                        id
+                        title
+                        user {
+                            profile_image {
+                                downloadUrl
+                            }
+                            id
+                        }
+                        user_comment
+                        user_message
+                        reason
+                        comment
+                        createdAt
+                        status
+                    }
+                }`,
+                variables: { reportId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.report) {
+                        return  {data: data.report};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === GET_ONE && resource === 'Blocked users') {
+            return {
+                query: gql`query User($userId: ID!) {
+                    user(id: $userId) {
+                        id
+                        isBlocked
+                        email
+                        first_name
+                        last_name
+                        gender
+                        dob
+                        profile_image {
+                            downloadUrl
+                        }
+                        lat
+                        lng
+                        about_me
+                        phone
+                        country
+                        city
+                        friendCount
+                        followerCount
+                        accountLevel {
+                            name
+                            id
+                        }
+                    }
+                }`,
+                variables: { userId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.user) {
+                        return  {data: data.user};
+                    }
+                    throw new Error(`Error`);
+                },
+            };
+        }
+        if (type === GET_LIST && resource === 'Blocked users') {
+            return {
+                query: gql`query Query {
+                    listOfBlockedUsers {
+                        email
+                        id
+                        cause
+                        blockDate
+                        first_name
+                        last_name
+                        profile_image {
+                            downloadUrl
+                        }
+                    }
+                }`,
+                variables: {},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.listOfBlockedUsers) {
+                        return  {data: data.listOfBlockedUsers, total: 123};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
         }
 
         if (type === GET_LIST && resource === 'Articles') {
@@ -105,6 +289,25 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 },
             };
         }
+        if (type === DELETE && resource === 'Custom articles') {
+            return {
+                query: gql`
+                    mutation Mutation($deleteArticleByAdminId: ID!) {
+                        deleteArticleByAdmin(id: $deleteArticleByAdminId) {
+                            code
+                            message
+                        }
+                    }
+                `,
+                variables: {deleteArticleByAdminId: params.id},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.deleteArticleByAdmin) {
+                        return {data: {id:params.id }};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
         if (type === DELETE && resource === 'Articles') {
             return {
                 query: gql`
@@ -119,6 +322,88 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
                     if (data.deleteArticleByAdmin) {
                         return {data: {id:params.id }};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+
+        if (type === UPDATE && resource === 'Custom articles') {
+            return {
+                query: gql`mutation Mutation($articleApprovalByAdminId: ID!, $approval: Boolean!) {
+                    articleApprovalByAdmin(id: $articleApprovalByAdminId, approval: $approval) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    articleApprovalByAdminId: params.id,
+                    approval: params.data.approve
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.articleApprovalByAdmin) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === UPDATE && resource === "Reports") {
+            return {
+                query: gql`mutation Mutation($confirmationOfReport: ConfirmationOfReport) {
+                    confirmationOfReport(confirmationOfReport: $confirmationOfReport) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    confirmationOfReport: {
+                        "comment": params.data.comment,
+                        "status": params.data.status,
+                        "report_id": params.id
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.confirmationOfReport) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === UPDATE && resource === "Blocked users") {
+            return {
+                query: gql`mutation Mutation($userId: ID!) {
+                    removeUserBlock(userId: $userId) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    userId: params.id,
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.removeUserBlock) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type === DELETE && resource === "Blocked users") {
+            return {
+                query: gql`mutation Mutation($userId: ID!) {
+                    removeUserBlock(userId: $userId) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    userId: params.id,
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.removeUserBlock) {
+                        return {data: {id: params.id}};
                     }
                     throw new Error(`Error`);
                 },
@@ -167,6 +452,7 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
             };
         }
         if (type === UPDATE && resource === 'Customer') {
+            console.log(params.data)
             return {
                 query: gql`mutation Mutation($updateUserByAdmin: UpdateUserByAdminRequest) {
                     updateUserByAdmin(updateUserByAdmin: $updateUserByAdmin) {
@@ -193,6 +479,8 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         "city": params.data.city,
                         "image_id": null,
                         "is_activated": params.data.is_activated,
+                        "cause": params.data["Reason For Blocking"],
+                        "isBlocked": params.data.isBlocked
                     }
                 },
                 parseResponse: ({ data }: ApolloQueryResult<any>) => {
@@ -266,6 +554,67 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                     throw new Error(`Error`);
                 },
             }
+        }
+        if (type === GET_ONE && resource === 'Custom articles') {
+            return {
+                query: gql`query Query($articleId: ID!) {
+                    article(id: $articleId) {
+                        id
+                        title
+                        short_description
+                        description
+                        viewed_count
+                        likes_count
+                        dislikes_count
+                        comments_count
+                        cover_image {
+                            downloadUrl
+                        }
+                        categories {
+                            id
+                            name
+                        }
+                        likes {
+                            id
+                            user_id
+                            article_id
+                            isLike
+                            user {
+                                id
+                                first_name
+                                last_name
+                            }
+                        }
+                        dislikes {
+                            id
+                            user {
+                                id
+                                email
+                                first_name
+                                last_name
+                            }
+                        }
+                        comments {
+                            id
+                            likes_count
+                            dislikes_count
+                            user {
+                                id
+                                email
+                                first_name
+                                last_name
+                            }
+                        }
+                    }
+                }`,
+                variables: { articleId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.article) {
+                        return  {data: data.article};
+                    }
+                    throw new Error(`Error`);
+                },
+            };
         }
         if (type === GET_ONE && resource === 'Articles') {
             return {
@@ -387,6 +736,11 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                         phone
                         country
                         city
+                        isBlocked
+                        reasonForBlocking {
+                            createdAt
+                            cause
+                        }
                     }
                 }`,
                 variables: { userId: params.id },
@@ -613,7 +967,6 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
 };
 
 export default async () => {
-    const token = localStorage.getItem("token");
     const authLink = setContext((_, { headers }) => {
         // get the authentication token from local storage if it exists
         const token = localStorage.getItem("token");
