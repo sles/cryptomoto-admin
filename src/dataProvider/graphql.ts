@@ -533,6 +533,25 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 },
             }
         }
+        if (type === DELETE && resource === "Reports") {
+            return {
+                query: gql`mutation Mutation($deleteReportId: ID!) {
+                    deleteReport(id: $deleteReportId) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    deleteReportId: params.id
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.deleteReport.code === 200) {
+                        return {data: {id: params.id}};
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
         if (type === UPDATE && resource === "Blocked users") {
             return {
                 query: gql`mutation Mutation($userId: ID!) {
