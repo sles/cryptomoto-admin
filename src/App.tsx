@@ -15,6 +15,7 @@ import categories from './categories';
 import blockedUsers from "./blocked-users";
 import customArticles from "./custom-articles";
 import reports from "./reports";
+import privateChats from "./private-chats";
 import dataProviderFactory from './dataProvider';
 import Configuration from './configuration/Configuration';
 import Segments from './segments/Segments';
@@ -72,6 +73,7 @@ const App = () => {
             <Resource name="blocked-users" {...blockedUsers}/>
             <Resource name="custom-articles" {...customArticles}/>
             <Resource name="reports" {...reports}/>
+            <Resource name="private-chats" {...privateChats}/>
         </Admin>
     );
 };

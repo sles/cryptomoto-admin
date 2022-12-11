@@ -5,10 +5,10 @@ import { useTranslate, useRecordContext } from 'react-admin';
 import { stringify } from 'query-string';
 
 import products from '../products';
-import { Category } from '../types';
+import { PrivateChat } from '../types';
 
 const LinkToRelatedArticles = () => {
-    const record = useRecordContext<Category>();
+    const record = useRecordContext<PrivateChat>();
     const translate = useTranslate();
     if (!record) return null;
     return (

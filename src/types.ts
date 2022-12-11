@@ -29,6 +29,10 @@ export interface Report extends RaRecord {
     size: number
 }
 
+export interface PrivateChat extends RaRecord {
+    users: Customer
+}
+
 export interface Customer extends RaRecord {
     first_name: string;
     last_name: string;

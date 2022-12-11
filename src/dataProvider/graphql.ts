@@ -12,6 +12,14 @@ const getGqlResource = (resource: string) => {
     switch (resource) {
         case 'reports':
             return "Reports";
+        case 'users':
+            return 'Users'
+        case 'Users':
+            return 'Users'
+        case "Private chats":
+            return 'Private chats'
+        case 'private-chats':
+            return 'Private chats'
         case 'customers':
             return 'Customer';
         case 'blocked-users':
@@ -52,7 +60,142 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
     return (type, resource, params) => {
         console.log('customBuildQuery return');
         console.log(type, resource, params)
-
+        if (type === GET_LIST && resource === 'Users') {
+            return {
+                query: gql`query Channels {
+                    users {
+                        id
+                        first_name
+                        last_name
+                    }
+                }`,
+                variables: { },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (!data.users.message) {
+                        return  {data: data.users, total: 123};
+                    }
+                    throw new Error(data.channel.message);
+                },
+            }
+        }
+        if (type === UPDATE && resource === 'Private chats') {
+            const users = []
+            for (const user of params.data.users) {
+                if (user.id) {
+                    continue
+                }
+                users.push(user)
+            }
+            return {
+                query: gql`mutation Mutation($channelId: ID!, $userIds: [ID!]) {
+                    addUsersToChannel(channelId: $channelId, userIds: $userIds) {
+                        code
+                        message
+                    }
+                }`,
+                variables: {
+                    channelId: params.id,
+                    userIds: users
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.addUsersToChannel.code === 200) {
+                        return  {data: {id: params.id}};
+                    }
+                    throw new Error(data.addUsersToChannel.message);
+                },
+            }
+        }
+        if (type === GET_ONE && resource === 'Private chats') {
+            return {
+                query: gql`query Channels($channelId: ID!) {
+                    channel(id: $channelId) {
+                        ... on BadRequestError {
+                            code
+                            message
+                        }
+                        ... on Channel {
+                            image {
+                                downloadUrl
+                            }
+                            users {
+                                id
+                                first_name
+                                last_name
+                                profile_image {
+                                    downloadUrl
+                                }
+                            }
+                            description
+                            type {
+                                name
+                                id
+                            }
+                            updatedAt
+                            createdAt
+                            name
+                            id
+                        }
+                    }
+                }`,
+                variables: { channelId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (!data.channel.message) {
+                        return  {data: data.channel};
+                    }
+                    throw new Error(data.channel.message);
+                },
+            }
+        }
+        if (type === GET_LIST && resource === 'Private chats') {
+            const sort = params.sort.field;
+            return {
+                query: gql`query Channels($paginationRequest: PaginationAndSearch) {
+                    channels(paginationRequest: $paginationRequest) {
+                        totalPages
+                        currentPage
+                        totalItems
+                        tutorials {
+                            id
+                            name
+                            createdAt
+                            updatedAt
+                            type {
+                                id
+                                name
+                            }
+                            description
+                            users {
+                                id
+                                first_name
+                                last_name
+                                profile_image {
+                                    downloadUrl
+                                }
+                            }
+                            image {
+                                id
+                                downloadUrl
+                            }
+                        }
+                    }
+                }`,
+                variables: {
+                    paginationRequest: {
+                        "search": params.filter.q,
+                        "page": params.pagination.page,
+                        "size": params.pagination.perPage,
+                        "sortBy": sort,
+                        "sortOrder": params.sort.order
+                    }
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.channels) {
+                        return  {data: data.channels.tutorials, total: data.channels.totalItems};
+                    }
+                    throw new Error(`Errors`);
+                },
+            }
+        }
         if (type === GET_LIST && resource === 'Reports') {
             const sort =  params.sort.field === 'author_id'? null: params.sort.field;
             return {
@@ -288,6 +431,25 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                     throw new Error(`Error`);
                 },
             };
+        }
+        if (type === DELETE && resource === 'Private chats') {
+            return {
+                query: gql`
+                    mutation Mutation($deleteChannelId: ID!) {
+                        deleteChannel(id: $deleteChannelId) {
+                            code
+                            message
+                        }
+                    }
+                `,
+                variables: {deleteChannelId: params.id},
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.deleteChannel.code === 200) {
+                        return {data: {id:params.id }};
+                    }
+                    throw new Error(data.deleteChannel.message);
+                },
+            }
         }
         if (type === DELETE && resource === 'Custom articles') {
             return {
@@ -677,7 +839,71 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 },
             };
         }
-        if (type  === GET_MANY_REFERENCE && "Articles") {
+        if (type === GET_MANY_REFERENCE && resource === 'Users') {
+            return {
+                query: gql`query Channels($channelId: ID!) {
+                    channel(id: $channelId) {
+                        ... on BadRequestError {
+                            code
+                            message
+                        }
+                        ... on Channel {
+                            image {
+                                downloadUrl
+                            }
+                            users {
+                                id
+                                first_name
+                                last_name
+                                profile_image {
+                                    downloadUrl
+                                }
+                            }
+                            description
+                            type {
+                                name
+                                id
+                            }
+                            updatedAt
+                            createdAt
+                            name
+                            id
+                        }
+                    }
+                }`,
+                variables: { channelId: params.id },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.channel) {
+                        return  {data: data.channel.users.map((user:any) => {
+                            return {...user, channelId: params.id}
+                            }), total: 123};
+                    }
+                    throw new Error(`Error`);
+                },
+            };
+        }
+        if (type === DELETE && resource === 'Users') {
+            return {
+                query: gql`
+                    mutation Mutation($channelId: ID!, $userId: ID!) {
+                        removeUserFromChannel(channelId: $channelId, userId: $userId) {
+                            code
+                            message
+                        }
+                    }`,
+                variables: {
+                    channelId: params.previousData.channelId,
+                    userId: params.id
+                },
+                parseResponse: ({ data }: ApolloQueryResult<any>) => {
+                    if (data.removeUserFromChannel) {
+                        return { data: { id: params.id } };
+                    }
+                    throw new Error(`Error`);
+                },
+            }
+        }
+        if (type  === GET_MANY_REFERENCE && resource === "Articles") {
             return {
                 query: gql`query Query($categoryId: ID!) {
                     getArticlesByCategoryId(categoryId: $categoryId) {
@@ -1000,7 +1226,6 @@ export default async () => {
                 return;
             }
             return async (resource: string, params: any) => {
-                console.log('NAME', name)
                 return dataProvider[name](getGqlResource(resource), params);
             };
         },

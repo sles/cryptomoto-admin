@@ -19,6 +19,7 @@ import categories from '../categories';
 import blockedUsers from "../blocked-users"
 import customArticles from "../custom-articles"
 import reports from "../reports"
+import privateChats from "../private-chats"
 import SubMenu from './SubMenu';
 
 type MenuName = 'menuCatalog' | 'menuSales' | 'menuCustomers';
@@ -119,16 +120,13 @@ const Menu = ({ dense = false }: MenuProps) => {
                 leftIcon={<reports.icon />}
                 dense={dense}
             />
-            {/*</SubMenu>*/}
-            {/*<MenuItemLink*/}
-            {/*    to="/reviews"*/}
-            {/*    state={{ _scrollToTop: true }}*/}
-            {/*    primaryText={translate(`resources.reviews.name`, {*/}
-            {/*        smart_count: 2,*/}
-            {/*    })}*/}
-            {/*    leftIcon={<reviews.icon />}*/}
-            {/*    dense={dense}*/}
-            {/*/>*/}
+            <MenuItemLink
+                to="/private-chats"
+                state={{ _scrollToTop: true }}
+                primaryText="Private chats"
+                leftIcon={<privateChats.icon />}
+                dense={dense}
+            />
         </Box>
     );
 };
