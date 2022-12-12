@@ -1148,7 +1148,7 @@ const customBuildQuery: BuildQueryFactory = introspectionResults => {
                 }`,
                 variables: {
                     articleCreationByAdminRequest: {
-                        "image_id": "c174b910-d227-492a-b981-780de5d9de33",
+                        "image_id": "74967658-411d-4880-b0a9-fbb54d8c96e6",
                         "priority": params.data.priority,
                         "description": params.data.description,
                         "short_description": params.data.short_description,
